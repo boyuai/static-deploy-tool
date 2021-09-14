@@ -3,6 +3,7 @@ const program = require('commander');
 const sync = require('./sync');
 const put = require('./put');
 const copy = require('./copy');
+const get = require('./get');
 
 program
     .version('1.2.0')
@@ -11,6 +12,7 @@ program
     .option('-r, --region [region]', 'Region')
     .option('-b, --bucket [bucket]', 'Bucket')
     .option('-e, --endpoint [endpoint]', 'Optional, will override region setting')
+    .option('-f, --force [force]', 'Optional, force get object and override')
 
 program
     .command('sync <local> <remote>')
@@ -50,6 +52,23 @@ program
                 source,
                 dest,
                 aliyun: checkParams(),
+            })
+        } catch (e) {
+            console.error(e.message);
+            process.exit(1);
+        }
+    })
+
+
+program
+    .command('get <remote> <local>')
+    .action(async (remote, local) => {
+        try {
+            await get({
+                local,
+                remote,
+                aliyun: checkParams(),
+                force: program.force
             })
         } catch (e) {
             console.error(e.message);
